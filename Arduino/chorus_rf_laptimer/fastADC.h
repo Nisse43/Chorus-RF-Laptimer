@@ -30,6 +30,11 @@ SOFTWARE.
 //----- ADC IMPROVEMENTS --------------------------------
 // to increase frequency of ADC readings
 // defines for setting and clearing register bits
+#if (SAML21) || (SAML22) || (SAMC20) || (SAMC21) || SAM || defined(__DOXYGEN__) || defined(__SAMD51__)
+void initFastADC() {
+
+}
+#else
 #define cbi(sfr, bit) (_SFR_BYTE(sfr) &= ~_BV(bit))
 #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
 
@@ -39,3 +44,4 @@ void initFastADC() {
     cbi(ADCSRA,ADPS1);
     cbi(ADCSRA,ADPS0);
 }
+#endif

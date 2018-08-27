@@ -29,13 +29,13 @@ SOFTWARE.
 
 // Pin definitions
 
-#define ledPin 13
-#define spiDataPin 10
-#define slaveSelectPin 11
-#define spiClockPin 12
+#define ledPin 10
+#define spiDataPin 11
+#define slaveSelectPin 12
+#define spiClockPin 13
 #define pinRaspiInt 5 //digital
-#define rssiPinA 3  //analog
-#define voltagePinA 0  //analog
+#define rssiPinA 0  //analog (3)
+#define voltagePinA 3  //analog (0)
 #define buzzerPin 9 // PWM buzzer
 
 #ifdef DEBUG

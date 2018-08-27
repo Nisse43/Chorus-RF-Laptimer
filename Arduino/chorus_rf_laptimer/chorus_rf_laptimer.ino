@@ -213,7 +213,7 @@ int32_t timeAdjustment = 0;
 //----- other globals------------------------------
 uint8_t allowLapGeneration = 0;
 uint8_t channelIndex = 0;
-uint8_t bandIndex = 0;
+uint8_t bandIndex = 3;
 uint8_t raceMode = 0; // 0: race mode is off; 1: lap times are counted relative to last lap end; 2: lap times are relative to the race start (sum of all previous lap times);
 uint8_t isSoundEnabled = 1;
 uint8_t isConfigured = 0; //changes to 1 if any input changes the state of the device. it will mean that externally stored preferences should not be applied
@@ -231,14 +231,14 @@ uint32_t millisUponRequest = 0;
 
 //----- read/write bufs ---------------------------
 #define READ_BUFFER_SIZE 20
-uint8_t readBuf[READ_BUFFER_SIZE];
+char readBuf[READ_BUFFER_SIZE];
 uint8_t proxyBuf[READ_BUFFER_SIZE];
 uint8_t readBufFilledBytes = 0;
 uint8_t proxyBufDataSize = 0;
 
 // ----------------------------------------------------------------------------
 #include "fastReadWrite.h"
-#include "fastADC.h"
+#include "avdweb_AnalogReadFast.h"
 #include "pinAssignments.h"
 #include "channels.h"
 #include "sendSerialHex.h"
@@ -248,6 +248,9 @@ uint8_t proxyBufDataSize = 0;
 // ----------------------------------------------------------------------------
 void setup() {
     // initialize led pin as output.
+    Serial.begin(BAUDRATE);
+    Serial.println(F("Lap timer"));
+    Serial.println(F("-----------------------------------------------"));
     pinMode(ledPin, OUTPUT);
     digitalHigh(ledPin);
 
@@ -265,10 +268,6 @@ void setup() {
     // faster boot up times :)
     frequency = setModuleChannel(channelIndex, bandIndex);
 
-    Serial.begin(BAUDRATE);
-
-    initFastADC();
-
     // Setup Done - Turn Status ledPin off.
     digitalLow(ledPin);
 
@@ -278,13 +277,14 @@ void setup() {
         pinMode(bufferBusyPin, OUTPUT);
         pinMode(dbgPin, OUTPUT);
     );
+
 }
 // ----------------------------------------------------------------------------
 void loop() {
     DEBUG_CODE(
         digitalToggle(loopTimerPin);
     );
-
+    
     // TODO: revise if additional filtering is really needed
     // TODO: if needed, then maybe use the same algorithm, as getSlowChangingRSSI to avoid decrease of values?
     rssi = getFilteredRSSI(); // actually it doesn't filter
@@ -293,6 +293,8 @@ void loop() {
         slowRssi = getSlowChangingRSSI(); // filter RSSI
     }
 
+    frequency = setModuleChannel(channelIndex, bandIndex);
+    
     // check rssi threshold to identify when drone finishes the lap
     if (rssiThreshold > 0) { // threshold = 0 means that we don't check rssi values
         if(rssi > rssiThreshold) { // rssi above the threshold - drone is near
@@ -577,7 +579,7 @@ void setupToSendSingleItem(uint8_t itemId) {
     shouldSendSingleItem = 1;
 }
 // ----------------------------------------------------------------------------
-void handleSerialControlInput(uint8_t *controlData, uint8_t length) {
+void handleSerialControlInput(char *controlData, uint8_t length) {
     uint8_t controlByte = controlData[0];
     uint8_t valueToSet;
 
@@ -996,10 +998,12 @@ uint16_t readRSSI() {
     int rssiA = 0;
 
     for (uint8_t i = 0; i < RSSI_READS; i++) {
-        rssiA += analogRead(rssiPinA);
+        rssiA += analogReadFast(rssiPinA);
     }
 
-    rssiA = rssiA/RSSI_READS; // average of RSSI_READS readings
+    rssiA = rssiA/RSSI_READS; // average of RSSI_READS readings    
+    Serial.print(F("Rssi: "));
+    Serial.println(rssiA);
     return rssiA;
 }
 // ----------------------------------------------------------------------------
@@ -1007,9 +1011,11 @@ uint16_t readVoltage() {
     int voltageA = 0;
 
     for (uint8_t i = 0; i < VOLTAGE_READS; i++) {
-        voltageA += analogRead(voltagePinA);
+        voltageA += analogReadFast(voltagePinA);
     }
 
     voltageA = voltageA/VOLTAGE_READS; // average of RSSI_READS readings
+    Serial.print(F("Voltage: "));
+    Serial.println(voltageA);
     return voltageA;
 }

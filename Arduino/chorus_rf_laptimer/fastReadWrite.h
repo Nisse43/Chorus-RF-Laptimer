@@ -27,6 +27,32 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+/*I have been trying to set the Feather M0 up as an SPI slave, 
+ using SCK (PB11), MOSI (PB10) and MISO (PA12). Attached is some code 
+ by Nick Gammon, appearing to work on boards based on ATmega328 chips. However lines*/
+
+#if (SAML21) || (SAML22) || (SAMC20) || (SAMC21) || (SAM) || defined(__DOXYGEN__) || defined(__SAMD51__)
+#define digitalLow(P) digitalWrite(P, LOW)
+#define digitalHigh(P) digitalWrite(P, HIGH)
+/*#define sei() interrupts()
+#define cli() noInterrupts()
+//pinMode (spiDataPin, OUTPUT); (MISO)
+#define SPI_DATA PORT_PA19
+#define spiDataDirOut REG_PORT_DIRSET0 = SPI_DATA;
+#define spiDataHigh REG_PORT_OUTSET0 = SPI_DATA;
+#define spiDataLow REG_PORT_OUTCLR0 = SPI_DATA;
+//pinMode (slaveSelectPin, OUTPUT); (MOSI)
+#define SLAVE PORT_PA16
+#define slaveSelectDirOut REG_PORT_DIRSET0 = SLAVE;
+#define slaveSelectHigh REG_PORT_OUTSET0 = SLAVE;
+#define slaveSelectLow REG_PORT_OUTCLR0 = SLAVE;
+//pinMode (spiClockPin, OUTPUT); (SCK) 
+#define SPI_CLOCK PORT_PA17
+#define spiClockDirOut REG_PORT_DIRSET0 = SPI_CLOCK;
+#define spiClockHigh REG_PORT_OUTSET0 = SPI_CLOCK;
+#define spiClockLow REG_PORT_OUTCLR0 = SPI_CLOCK;*/
+    
+#else
 #define portOfPin(P)\
   (((P)>=0&&(P)<8)?&PORTD:(((P)>7&&(P)<14)?&PORTB:&PORTC))
 #define ddrOfPin(P)\
@@ -45,3 +71,4 @@ SOFTWARE.
 #define isHigh(P)((*(pinOfPin(P))& pinMask(P))>0)
 #define isLow(P)((*(pinOfPin(P))& pinMask(P))==0)
 #define digitalState(P)((uint8_t)isHigh(P))
+#endif

@@ -34,7 +34,7 @@ SOFTWARE.
 #if (SAML21) || (SAML22) || (SAMC20) || (SAMC21) || (SAM) || defined(__DOXYGEN__) || defined(__SAMD51__)
 #define digitalLow(P) digitalWrite(P, LOW)
 #define digitalHigh(P) digitalWrite(P, HIGH)
-/*#define sei() interrupts()
+#define sei() interrupts()
 #define cli() noInterrupts()
 //pinMode (spiDataPin, OUTPUT); (MISO)
 #define SPI_DATA PORT_PA19
@@ -50,7 +50,7 @@ SOFTWARE.
 #define SPI_CLOCK PORT_PA17
 #define spiClockDirOut REG_PORT_DIRSET0 = SPI_CLOCK;
 #define spiClockHigh REG_PORT_OUTSET0 = SPI_CLOCK;
-#define spiClockLow REG_PORT_OUTCLR0 = SPI_CLOCK;*/
+#define spiClockLow REG_PORT_OUTCLR0 = SPI_CLOCK;
     
 #else
 #define portOfPin(P)\

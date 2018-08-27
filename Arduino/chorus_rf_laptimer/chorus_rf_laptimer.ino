@@ -293,7 +293,7 @@ void loop() {
         slowRssi = getSlowChangingRSSI(); // filter RSSI
     }
 
-    frequency = setModuleChannel(channelIndex, bandIndex);
+    //frequency = setModuleChannel(channelIndex, bandIndex);
     
     // check rssi threshold to identify when drone finishes the lap
     if (rssiThreshold > 0) { // threshold = 0 means that we don't check rssi values
